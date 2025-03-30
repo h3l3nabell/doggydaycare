@@ -27,9 +27,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} text-sm text-zinc-900 bg-[#e5e8ec] antialiased min-h-screen`}
       >
-        <h1>Doggy Day Care</h1>
         {children}
-        <div>the best care for your best friend</div>
       </body>
     </html>
   );
