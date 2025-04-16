@@ -3,6 +3,7 @@ import BackgroundPattern from "@/components/background-pattern";
 import AppHeader from "@/components/app-header";
 import AppFooter from "@/components/app-footer";
 import PetContextProvider from "@/contexts/pet-context-provider";
+import { Pet } from "@/lib/types";
 
 export default async function Layout({ children }: { children: ReactNode }) {
   const response = await fetch(
@@ -11,7 +12,8 @@ export default async function Layout({ children }: { children: ReactNode }) {
   if (!response.ok) {
     throw new Error("Failed to fetch pets data");
   }
-  const data = await response.json();
+
+  const data: Pet[] = await response.json();
   console.log(data);
 
   return (
