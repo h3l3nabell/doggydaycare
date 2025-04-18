@@ -31,7 +31,7 @@ type PetDetailsProps = {
 
 function TopBar({ selectedPet }: PetDetailsProps) {
   return (
-    <div className="flex items-center bg-white px-8 py-5 border-b border-black/[0.08]">
+    <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
         src={
           selectedPet?.imageUrl ??
@@ -73,7 +73,7 @@ function PetInfo({ selectedPet }: PetDetailsProps) {
 
 function PetNotes({ selectedPet }: PetDetailsProps) {
   return (
-    <section className="flex-1 px-7 py-5 mb-9 mx-8 bg-white rounded-md border border-black/[0.08]">
+    <section className="flex-1 px-7 py-5 mb-9 mx-8 bg-white rounded-md border border-light">
       {selectedPet?.notes}
     </section>
   );
