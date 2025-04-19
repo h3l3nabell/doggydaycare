@@ -27,15 +27,16 @@ export default function PetDetails() {
 }
 
 type PetDetailsProps = {
-  selectedPet: Pet | undefined;
+  selectedPet: Pet;
 };
 
 function TopBar({ selectedPet }: PetDetailsProps) {
+  const { handleCheckOutPet } = usePetContext();
   return (
     <div className="flex items-center bg-white px-8 py-5 border-b border-light">
       <Image
         src={
-          selectedPet?.imageUrl ??
+          selectedPet.imageUrl ??
           "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png"
         }
         alt="selected pet image"
@@ -44,11 +45,16 @@ function TopBar({ selectedPet }: PetDetailsProps) {
         className="h-[75px] w-[75px] rounded object-cover"
       />
       <h2 className="text-3xl font-semibold leading-y ml-5">
-        {selectedPet?.name ?? "Mystery Pet"}
+        {selectedPet.name}
       </h2>
       <div className="ml-auto space-x-2">
         <PetButton actionType="edit">Edit</PetButton>
-        <PetButton actionType="checkout">Checkout</PetButton>
+        <PetButton
+          actionType="checkout"
+          onClick={() => handleCheckOutPet(selectedPet.id)}
+        >
+          Checkout
+        </PetButton>
       </div>
     </div>
   );
@@ -61,16 +67,12 @@ function PetInfo({ selectedPet }: PetDetailsProps) {
         <h3 className="text-[13px] font-medium uppercase text-zinc-700">
           Owner Name
         </h3>
-        <p className="mt-1 text-lg text-zinc-800">
-          {selectedPet?.ownerName ?? "Unknown"}
-        </p>
+        <p className="mt-1 text-lg text-zinc-800">{selectedPet.ownerName}</p>
       </div>
 
       <div>
         <h3 className="text-[13px] font-medium uppercase text-zinc-700">Age</h3>
-        <p className="mt-1 text-lg text-zinc-800">
-          {selectedPet?.age ?? "Unknown"}
-        </p>
+        <p className="mt-1 text-lg text-zinc-800">{selectedPet.age}</p>
       </div>
     </div>
   );
