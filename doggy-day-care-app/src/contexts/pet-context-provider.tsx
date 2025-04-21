@@ -12,6 +12,7 @@ type PetContextType = {
   selectedPetId: string | null;
   selectedPet: Pet | undefined;
   numberOfPets: number;
+  handleAddPet: (newPet: Pet) => void;
   handleCheckOutPet: (id: string) => void;
   handleChangeSelectedPetId: (id: string) => void;
 };
@@ -21,10 +22,7 @@ export const PetContext = createContext<PetContextType | null>(null);
 export default function PetContextProvider({
   data,
   children,
-}: {
-  data: Pet[];
-  children: ReactNode;
-}) {
+}: PetContextProviderProps) {
   //state
   const [pets, setPets] = useState(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
@@ -34,6 +32,11 @@ export default function PetContextProvider({
   const numberOfPets = pets.length;
 
   //actions
+  const handleAddPet = (newPet: Pet) => {
+    console.log("adding pet ", newPet);
+    setPets((prev) => [...prev, newPet]);
+  };
+
   const handleCheckOutPet = (id: string) => {
     console.log("removing pet ", id);
     setPets((prev) => prev.filter((pet) => pet.id !== id));
@@ -52,6 +55,7 @@ export default function PetContextProvider({
         selectedPetId,
         selectedPet,
         numberOfPets,
+        handleAddPet,
         handleCheckOutPet,
         handleChangeSelectedPetId,
       }}
