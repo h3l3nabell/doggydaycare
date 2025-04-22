@@ -48,9 +48,10 @@ export default function PetButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle id="dialog-title">
+          <DialogTitle>
             {actionType === "add" ? "Add a new pet" : "Edit pet details"}
           </DialogTitle>
+
           <DialogDescription className="sr-only">
             {actionType === "add"
               ? "A form with details for the new pet"
