@@ -1,6 +1,8 @@
+"use client";
+
 import { PlusIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +24,8 @@ export default function PetButton({
   actionType,
   onClick,
 }: PetButtonProps) {
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   if (actionType === "checkout") {
     return (
       <Button variant="secondary" onClick={onClick}>
@@ -32,7 +36,7 @@ export default function PetButton({
 
   // actionType Add or Edit
   return (
-    <Dialog>
+    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
       <DialogTrigger asChild>
         {actionType === "add" ? (
           <Button size="icon">
@@ -44,11 +48,19 @@ export default function PetButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle id="dialog-title">
             {actionType === "add" ? "Add a new pet" : "Edit pet details"}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {actionType === "add"
+              ? "A form with details for the new pet"
+              : "A form with details to edit pet details"}
+          </DialogDescription>
         </DialogHeader>
-        <PetForm actionType={actionType} />
+        <PetForm
+          actionType={actionType}
+          onFormSubmission={() => setIsFormOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );
