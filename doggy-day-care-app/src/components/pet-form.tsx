@@ -4,9 +4,13 @@ import React, { ReactNode } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+
 import { usePetContext } from "@/lib/hooks";
 import { Pet } from "@/lib/types";
+import { addPetAction, editPetAction } from "@/actions/actions";
+import PetFormButton from "./pet-form-button";
+import { toast } from "sonner";
+//import { useRouter } from "next/navigation";
 
 type PetFormProps = {
   actionType: "add" | "edit";
@@ -19,35 +23,68 @@ export default function PetForm({
   className,
   onFormSubmission,
 }: PetFormProps) {
-  const { handleAddPet, handleEditPet, selectedPet } = usePetContext();
+  const { handleAddPet, handleEditPet, selectedPet, selectedPetId } =
+    usePetContext();
+  //const router = useRouter();
+  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   console.log(`form submitted ${actionType} for pet: ${selectedPet?.name}`);
+  //   const formData = new FormData(event.currentTarget);
+  //   const petFormData: Omit<Pet, "id"> = {
+  //     name: formData.get("name") as string,
+  //     ownerName: formData.get("ownerName") as string,
+  //     imageUrl:
+  //       (formData.get("imageUrl") as string) ||
+  //       "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+  //     age: Number(formData.get("age")),
+  //     notes: formData.get("notes") as string,
+  //   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log(`form submitted ${actionType} for pet: ${selectedPet?.name}`);
-    const formData = new FormData(event.currentTarget);
-    const petFormData: Omit<Pet, "id"> = {
-      name: formData.get("name") as string,
-      ownerName: formData.get("ownerName") as string,
-      imageUrl:
-        (formData.get("imageUrl") as string) ||
-        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-      age: Number(formData.get("age")),
-      notes: formData.get("notes") as string,
-    };
+  //   console.log(petFormData);
 
-    console.log(petFormData);
-
-    if (actionType === "add") {
-      handleAddPet(petFormData);
-    } else {
-      handleEditPet(selectedPet?.id ?? "", petFormData);
-    }
-    onFormSubmission();
-  };
+  //   if (actionType === "add") {
+  //     handleAddPet(petFormData);
+  //   } else {
+  //     handleEditPet(selectedPet?.id ?? "", petFormData);
+  //   }
+  //   onFormSubmission();
+  // };
 
   return (
     <form
-      onSubmit={handleSubmit}
+      action={async (formData) => {
+        const petFromFormData: Omit<Pet, "id"> = {
+          name: formData.get("name") as string,
+          ownerName: formData.get("ownerName") as string,
+          imageUrl:
+            (formData.get("imageUrl") as string) ||
+            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+          age: Number(formData.get("age")),
+          notes: formData.get("notes") as string,
+        };
+
+        if (actionType === "add") {
+          handleAddPet(petFromFormData);
+          const error = await addPetAction(formData);
+          if (error) {
+            console.error("Error adding pet:", error);
+            toast.warning(error.message);
+            return;
+          }
+        }
+        if (actionType === "edit" && selectedPetId) {
+          handleEditPet(selectedPetId, petFromFormData);
+          const error = await editPetAction(selectedPetId, formData);
+          if (error) {
+            console.error("Error updating pet:", error);
+            toast.warning(error.message);
+            return;
+          }
+        }
+
+        onFormSubmission();
+      }}
+      // onSubmit={handleSubmit}
       className={cn("flex flex-col font-medium text-2xl leading-6", className)}
     >
       <fieldset className=" space-y-3">
@@ -83,7 +120,9 @@ export default function PetForm({
           name="age"
           type="number"
           required
-          defaultValue={actionType === "edit" ? selectedPet?.age : ""}
+          defaultValue={
+            actionType === "edit" ? selectedPet?.age?.toString() : ""
+          }
         />
 
         <Label htmlFor="notes">Notes</Label>
@@ -96,9 +135,7 @@ export default function PetForm({
         />
       </fieldset>
 
-      <Button type="submit" className="mt-5 self-end">
-        {actionType === "add" ? "Add Pet" : "Save Pet"}
-      </Button>
+      <PetFormButton actionType={actionType} />
     </form>
   );
 }

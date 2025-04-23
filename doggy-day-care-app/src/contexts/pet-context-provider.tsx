@@ -1,6 +1,7 @@
 "use client";
 import { Pet } from "@/lib/types";
 import React, { createContext, ReactNode, useState } from "react";
+import { addPet, checkOutPet } from "@/actions/actions";
 
 type PetContextProviderProps = {
   data: Pet[];
@@ -33,22 +34,24 @@ export default function PetContextProvider({
   const numberOfPets = pets.length;
 
   //actions
-  const handleAddPet = (inputPet: Omit<Pet, "id">) => {
-    console.log("adding pet ", inputPet);
+  const handleAddPet = async (inputPet: Omit<Pet, "id">) => {
+    console.log("adding pet in state", inputPet);
     const newPet: Pet = { ...inputPet, id: Date.now().toString() };
     setPets((prev) => [...prev, newPet]);
+    //await addPet(inputPet); //This might be a neater approach for offline first PWA
   };
 
   const handleEditPet = (petId: string, inputPet: Omit<Pet, "id">) => {
-    console.log("updating pet ", inputPet);
+    console.log("updating pet in state", inputPet);
     const newPet: Pet = { ...inputPet, id: petId };
     setPets((prev) => prev.map((pet) => (pet.id === petId ? newPet : pet)));
   };
 
-  const handleCheckOutPet = (id: string) => {
-    console.log("removing pet ", id);
+  const handleCheckOutPet = async (id: string) => {
+    console.log("removing pet in state", id);
     setPets((prev) => prev.filter((pet) => pet.id !== id));
     setSelectedPetId(null);
+    await checkOutPet(id);
   };
 
   const handleChangeSelectedPetId = (id: string) => {
