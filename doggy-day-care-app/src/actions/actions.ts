@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 // Always enforce authentication and authorization within the action.
 // Use Next.js built-in protections (Origin checks, encrypted IDs), but do not rely on them alone.
 
-export async function addPet(pet: Omit<Pet, "id">) {
+export async function addPet(pet: Omit<Pet, "id" | "createdAt" | "updatedAt">) {
   try {
     console.log("adding pet", pet);
     await prisma?.pet.create({ data: pet });
@@ -28,7 +28,7 @@ export async function addPet(pet: Omit<Pet, "id">) {
 
 export async function addPetAction(formData: FormData) {
   await sleep(2000); // Simulate a delay for demonstration purposes
-  const petFormData: Omit<Pet, "id"> = {
+  const petFormData: Omit<Pet, "id" | "createdAt" | "updatedAt"> = {
     name: formData.get("name") as string,
     ownerName: formData.get("ownerName") as string,
     imageUrl:
@@ -52,7 +52,10 @@ export async function addPetAction(formData: FormData) {
   console.log("layout revalidated");
 }
 
-export async function editPet(petId: string, inputPet: Omit<Pet, "id">) {
+export async function editPet(
+  petId: string,
+  inputPet: Omit<Pet, "id" | "createdAt" | "updatedAt">
+) {
   try {
     console.log("updating pet", inputPet);
     await prisma?.pet.update({
@@ -75,7 +78,7 @@ export async function editPet(petId: string, inputPet: Omit<Pet, "id">) {
 
 export async function editPetAction(petId: string, formData: FormData) {
   await sleep(1000); // Simulate a delay for demonstration purposes
-  const petFormData: Omit<Pet, "id"> = {
+  const petFormData: Omit<Pet, "id" | "createdAt" | "updatedAt"> = {
     name: formData.get("name") as string,
     ownerName: formData.get("ownerName") as string,
     imageUrl:

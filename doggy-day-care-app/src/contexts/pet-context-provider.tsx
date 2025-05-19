@@ -1,6 +1,11 @@
 "use client";
 import { Pet } from "@/lib/types";
-import React, { createContext, ReactNode, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useOptimistic,
+  useState,
+} from "react";
 import { addPet, checkOutPet } from "@/actions/actions";
 
 type PetContextProviderProps = {
@@ -26,6 +31,7 @@ export default function PetContextProvider({
   children,
 }: PetContextProviderProps) {
   //state
+  const [optimisticPets, setOptimisticPets] = useOptimistic(data);
   const [pets, setPets] = useState(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
